@@ -4,7 +4,7 @@ stemmer = LancasterStemmer()
 
 import numpy as np
 import tflearn
-import tensorflow
+import tensorflow as tf
 import random
 import json
 
@@ -20,15 +20,15 @@ nltk.download('punkt')
 
 for intent in data["intents"]:
 	for pattern in intent["patterns"]:
-		wrds = nltk.word_tokenize(pattern)
+		wrds = nltk.word_tokenize(words)
 		words.extend(wrds)
-		docs_x.append(pattern)
+		docs_x.append(words)
 		docs_y.append(intent["tag"])
 
 	if intent["tag"] not in labels:
 		labels.append(intent["tag"])
 
-words = [stemmer.stem(w.lower()) for w in words]
+words = [stemmer.stem(w.lower()) for w in words if w not in "?"]
 words = sorted(list(set(words)))
 
 labels = sorted(labels)
@@ -57,3 +57,7 @@ for x, doc in enumerate(docs_x):
 
 training = np.array(training)
 output = np.array(output)
+
+tf.reset_default_graph()
+
+net = tflearn.input_data(shape=[None, len(training[0])])
