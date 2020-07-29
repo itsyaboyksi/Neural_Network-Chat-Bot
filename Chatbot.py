@@ -16,7 +16,7 @@ labels = []
 docs_x = []
 docs_y = []
 
-nltk.download('punkt')
+#nltk.download('punkt')
 
 for intent in data["intents"]:
 	for pattern in intent["patterns"]:
