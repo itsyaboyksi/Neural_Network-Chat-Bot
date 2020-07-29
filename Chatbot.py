@@ -20,7 +20,7 @@ nltk.download('punkt')
 
 for intent in data["intents"]:
 	for pattern in intent["patterns"]:
-		wrds = nltk.word_tokenize(words)
+		wrds = nltk.word_tokenize(pattern)
 		words.extend(wrds)
 		docs_x.append(words)
 		docs_y.append(intent["tag"])
@@ -41,7 +41,7 @@ out_empty = [0 for _ in range(len(labels))]
 for x, doc in enumerate(docs_x):
 	bag = []
 
-	wrds = [stemmer.stem(w) for w in doc]
+	wrds = [stemmer.stem(w.lower()) for w in doc]
 
 	for w in words:
 		if w in wrds:
@@ -61,3 +61,16 @@ output = np.array(output)
 tf.reset_default_graph()
 
 net = tflearn.input_data(shape=[None, len(training[0])])
+net = tflearn.fully_connected(net, 8)
+net = tflearn.fully_connected(net, 8)
+net = tflearn.fully_connected(net, len(output[0]), activation = 'softmax')
+net = tflearn.regression(net)
+
+model = tflearn.DNN(net)
+
+model.fit(training, output, n_epoch = 1000, batch_size = 8, show_metric = True)
+model.save("model.tflearn")
+'''
+import tensorflow as tf
+print("Num GPUs Available: ", len(tf.config.experimental.list_physical_devices('GPU')))
+'''
