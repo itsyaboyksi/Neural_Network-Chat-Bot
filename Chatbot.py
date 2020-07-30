@@ -109,6 +109,12 @@ def chat():
 		if inp.lower() == "quit":
 			break
 		results = model.predict([bag_of_words(inp.lower(), words)])
-		print(results)
+		results_index = np.argmax(results)
+		tag = labels[results_index]
+		
+		for tg in data["intents"]:
+			if tg['tag'] == tag:
+				responses = tg['responses']
 
+		print(random.choice(responses))
 chat()
